@@ -1,0 +1,23 @@
+{
+    "name": "orchardcity/laravel-samcart",
+    "description": "Samcart API library for use with php Laravel",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Orchardcity\\LaravelSamcart\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Jordan Edwards",
+            "email": "jordan@orchardcity.ca",
+            "role": "Developer"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^8.0",
+        "guzzlehttp/guzzle": "^7.0"
+    }
+}
