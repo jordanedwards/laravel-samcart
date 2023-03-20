@@ -1,4 +1,7 @@
 <?php
+
+namespace Orchardcity\LaravelSamcart;
+
 class Endpoints
 {
     public const BASE = 'https://api.samcart.com/';

@@ -2,7 +2,6 @@
 
 namespace Orchardcity\LaravelSamcart;
 
-use Endpoints;
 use GuzzleHttp\Exception\GuzzleException;
 
 class Samcart extends BaseService
