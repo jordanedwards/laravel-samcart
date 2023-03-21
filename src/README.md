@@ -1,6 +1,5 @@
-This is a php library (specifically built for laravel) for using the Samcart API
+This is a php library for interacting with the Samcart API (Specifically written for Laravel)
 
-API docs here:
 https://developer.samcart.com/#section/Introduction
 
-For updates, improvements, and fixes, feel free to open a PR! 
+For updates, improvements, or fixes, please feel free to open a PR!
