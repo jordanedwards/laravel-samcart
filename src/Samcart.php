@@ -39,22 +39,34 @@ class Samcart extends BaseService
 
     // Retrieve individual records
 
+    /**
+     * @throws GuzzleException
+     */
     public function getProductById($id)
     {
         return $this->getObjectById(get_class(new Product()), Endpoints::getByProductIdURI($id));
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function getCustomerById($id)
     {
         return $this->getObjectById(get_class(new Customer()), Endpoints::getByCustomerIdURI($id));
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function getOrderById($id)
     {
         return $this->getObjectById(get_class(new Order()), Endpoints::getByOrderIdURI($id));
     }
 
-    public function issueChargeRefund($id)
+    /**
+     * @throws GuzzleException
+     */
+    public function issueChargeRefund($id): bool
     {
         $result = $this->makeRequest(Endpoints::issueChargeRefundURI($id),"POST");
         if (!$result){
@@ -64,7 +76,10 @@ class Samcart extends BaseService
         return true;
     }
 
-    public function getListOf(string $listObjectClassName, string $url, int $limit = 250)
+    /**
+     * @throws GuzzleException
+     */
+    public function getListOf(string $listObjectClassName, string $url, int $limit = 250): bool|Collection
     {
         $results = $this->makePaginatedRequest($url, "GET", $limit);
 
@@ -84,6 +99,9 @@ class Samcart extends BaseService
         return $collection;
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function getObjectById(string $listObjectClassName, string $url)
     {
         $result = $this->makeRequest($url,"GET");

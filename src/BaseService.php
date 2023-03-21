@@ -6,7 +6,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Request;
-use Orchardcity\LaravelSamcart\AuthException;
+use Orchardcity\LaravelSamcart\Config\V1\Endpoints;
 
 class BaseService
 {
@@ -29,7 +29,7 @@ class BaseService
         if ($api_key) {
             $this->api_key = $api_key;
         } else {
-            throw new \AuthException('Api key not given');
+            throw new AuthException('Api key not given');
         }
 
         $this->client = new Client();
@@ -37,6 +37,10 @@ class BaseService
 
     // Unfortunately, Samcart doesn't have a route to check auth, so we just get one page of orders to
     // validate that auth and connection work
+    /**
+     * @throws GuzzleException
+     * @throws AuthException
+     */
     public function testConnection(): bool
     {
         if ($this->makeRequest(Endpoints::getOrdersURI(), "GET", [], 1)){
@@ -54,7 +58,7 @@ class BaseService
      * @param array $args array, additional arguments for request
      *
      * @return false|array
-     * @throws GuzzleException
+     * @throws GuzzleException|AuthException
      */
     public function makeRequest(
         string $url,
@@ -95,17 +99,11 @@ class BaseService
             }
         }
 
+        $responseContents = $response->getBody()->getContents();
+
         // If not between 200 and 300
         if (!preg_match("/^[2-3][0-9]{2}/", $response->getStatusCode())) {
-            throw new Exception('Call to samcart api returned status code: '. $status_code);
-        }
-
-        $responseContents = $response->getBody()->getContents();
-        $status_code = $response->getStatusCode();
-
-        // If not between 200 and 300
-        if (!preg_match("/^[2-3][0-9]{2}/", $status_code)) {
-            throw new Exception('Call to samcart api returned status code: '. $status_code);
+            throw new \Exception('Call to samcart api returned status code: '. $response->getStatusCode());
         }
 
         $response_body = json_decode($responseContents, true);
@@ -123,16 +121,17 @@ class BaseService
      * I.e. Charges, Customers, Products, Refunds
      * @param string $url
      * @param string $method POST, GET, PUT, PATCH, DELETE
-     * @param array $limit used for pagination, must be multiples of 100
+     * @param int $limit used for pagination, must be multiples of 100
      * @param array $args array, additional arguments for request
      * @return false|array
      * @throws GuzzleException
+     * @throws AuthException
      */
     public function makePaginatedRequest(
-        string $url,
-        string $method = "GET",
-        $limit = 200,
-        array $args = []
+        string    $url,
+        string    $method = "GET",
+        int       $limit = 200,
+        array     $args = []
     ): false|array
     {
         $data = [];

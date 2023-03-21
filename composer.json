@@ -18,6 +18,7 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.0",
-        "guzzlehttp/guzzle": "^7.0"
+        "guzzlehttp/guzzle": "^7.0",
+        "laravel/framework": "^v7"
     }
 }
