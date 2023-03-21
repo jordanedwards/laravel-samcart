@@ -1,10 +1,10 @@
 <?php
 
-namespace Orchardcity\LaravelSamcart;
+namespace Orchardcity\LaravelSamcart\Config\V1;
 
 class Endpoints
 {
-    public const BASE = 'https://api.samcart.com/';
+    public const BASE = 'https://api.samcart.com/v1/';
 
     public static function getProductsURI(): string
     {

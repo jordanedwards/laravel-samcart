@@ -3,16 +3,96 @@
 namespace Orchardcity\LaravelSamcart;
 
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Support\Collection;
+use Orchardcity\LaravelSamcart\Values\ListObject;
+use Orchardcity\LaravelSamcart\Values\Order;
+use Orchardcity\LaravelSamcart\Values\Product;
+use Orchardcity\LaravelSamcart\Values\Customer;
+use Orchardcity\LaravelSamcart\Config\V1\Endpoints;
 
 class Samcart extends BaseService
 {
+    // Retrieve Lists
+    /**
+     * @throws GuzzleException
+     */
+    public function getProducts($limit = 250): false|Collection
+    {
+        return $this->getListOf(get_class(new Product()), Endpoints::getProductsURI(), $limit);
+    }
 
     /**
      * @throws GuzzleException
      */
-    public function getProducts(): false|array
+    public function getOrders($limit = 100): false|Collection
     {
-        $results = $this->makeRequest(Endpoints::getProductsURI());
-        return $results;
+        return $this->getListOf(get_class(new Order()), Endpoints::getOrdersURI(), $limit);
+    }
+
+    /**
+     * @throws GuzzleException
+     */
+    public function getCustomers($limit = 250): false|Collection
+    {
+        return $this->getListOf(get_class(new Customer()), Endpoints::getCustomersURI(), $limit);
+    }
+
+    // Retrieve individual records
+
+    public function getProductById($id)
+    {
+        return $this->getObjectById(get_class(new Product()), Endpoints::getByProductIdURI($id));
+    }
+
+    public function getCustomerById($id)
+    {
+        return $this->getObjectById(get_class(new Customer()), Endpoints::getByCustomerIdURI($id));
+    }
+
+    public function getOrderById($id)
+    {
+        return $this->getObjectById(get_class(new Order()), Endpoints::getByOrderIdURI($id));
+    }
+
+    public function issueChargeRefund($id)
+    {
+        $result = $this->makeRequest(Endpoints::issueChargeRefundURI($id),"POST");
+        if (!$result){
+            return false;
+        }
+
+        return true;
+    }
+
+    public function getListOf(string $listObjectClassName, string $url, int $limit = 250)
+    {
+        $results = $this->makePaginatedRequest($url, "GET", $limit);
+
+        if (!$results){
+            return false;
+        }
+
+        $collection = new Collection();
+
+        foreach ($results as $resultsArray)
+        {
+            $record = new $listObjectClassName();
+            $record->populateFromArray($resultsArray);
+            $collection->add($record);
+        }
+
+        return $collection;
+    }
+
+    public function getObjectById(string $listObjectClassName, string $url)
+    {
+        $result = $this->makeRequest($url,"GET");
+        if (!$result){
+            return null;
+        }
+
+        $record = new $listObjectClassName();
+        $record->populateFromArray($result);
+        return $record;
     }
 }
