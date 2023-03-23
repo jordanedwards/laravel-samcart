@@ -2,7 +2,9 @@
 
 namespace Orchardcity\LaravelSamcart;
 
-class AuthException extends \Exception 
+use Exception;
+
+class AuthException extends Exception
 {
 
 }

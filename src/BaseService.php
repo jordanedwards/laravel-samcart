@@ -7,7 +7,6 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Request;
 use Orchardcity\LaravelSamcart\Config\V1\Endpoints;
-
 class BaseService
 {
     protected bool $active = false;
@@ -43,7 +42,7 @@ class BaseService
      */
     public function testConnection(): bool
     {
-        if ($this->makeRequest(Endpoints::getOrdersURI(), "GET", [], 1)){
+        if ($this->makeRequest(Endpoints::getOrdersURI(), "GET", [])){
             return true;
         }
         return false;

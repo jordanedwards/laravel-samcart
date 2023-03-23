@@ -4,7 +4,6 @@ namespace Orchardcity\LaravelSamcart;
 
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Collection;
-use Orchardcity\LaravelSamcart\Values\ListObject;
 use Orchardcity\LaravelSamcart\Values\Order;
 use Orchardcity\LaravelSamcart\Values\Product;
 use Orchardcity\LaravelSamcart\Values\Customer;
