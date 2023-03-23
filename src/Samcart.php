@@ -13,7 +13,7 @@ class Samcart extends BaseService
 {
     // Retrieve Lists
     /**
-     * @throws GuzzleException
+     * @throws GuzzleException|AuthException
      */
     public function getProducts($limit = 250): false|Collection
     {
@@ -21,7 +21,7 @@ class Samcart extends BaseService
     }
 
     /**
-     * @throws GuzzleException
+     * @throws GuzzleException|AuthException
      */
     public function getOrders($limit = 100): false|Collection
     {
@@ -29,7 +29,7 @@ class Samcart extends BaseService
     }
 
     /**
-     * @throws GuzzleException
+     * @throws GuzzleException|AuthException
      */
     public function getCustomers($limit = 250): false|Collection
     {
@@ -39,7 +39,7 @@ class Samcart extends BaseService
     // Retrieve individual records
 
     /**
-     * @throws GuzzleException
+     * @throws GuzzleException|AuthException
      */
     public function getProductById($id)
     {
@@ -47,7 +47,7 @@ class Samcart extends BaseService
     }
 
     /**
-     * @throws GuzzleException
+     * @throws GuzzleException|AuthException
      */
     public function getCustomerById($id)
     {
@@ -55,7 +55,7 @@ class Samcart extends BaseService
     }
 
     /**
-     * @throws GuzzleException
+     * @throws GuzzleException|AuthException
      */
     public function getOrderById($id)
     {
@@ -63,7 +63,7 @@ class Samcart extends BaseService
     }
 
     /**
-     * @throws GuzzleException
+     * @throws GuzzleException|AuthException
      */
     public function issueChargeRefund($id): bool
     {
@@ -76,7 +76,7 @@ class Samcart extends BaseService
     }
 
     /**
-     * @throws GuzzleException
+     * @throws GuzzleException|AuthException
      */
     public function getListOf(string $listObjectClassName, string $url, int $limit = 250): bool|Collection
     {
@@ -99,7 +99,7 @@ class Samcart extends BaseService
     }
 
     /**
-     * @throws GuzzleException
+     * @throws GuzzleException|AuthException
      */
     public function getObjectById(string $listObjectClassName, string $url)
     {
