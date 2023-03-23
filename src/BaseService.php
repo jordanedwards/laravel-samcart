@@ -96,6 +96,8 @@ class BaseService
                 sleep(5);
                 return $this->makeRequest($url, $method, $args);
             }
+
+            throw new \Exception($exception->getMessage());
         }
 
         $responseContents = $response->getBody()->getContents();
@@ -144,7 +146,11 @@ class BaseService
             return $data;
         }
 
-        $data = $response_body['data'];
+        if (isset($response_body['data'])) {
+            $data = $response_body['data'];
+        } else {
+            $data = $response_body;
+        }
 
         while (isset($response_body['pagination']['next'])
             AND sizeof($data) < $limit){

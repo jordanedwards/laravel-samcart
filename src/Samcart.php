@@ -4,6 +4,7 @@ namespace Orchardcity\LaravelSamcart;
 
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Collection;
+use Orchardcity\LaravelSamcart\Values\Charge;
 use Orchardcity\LaravelSamcart\Values\Order;
 use Orchardcity\LaravelSamcart\Values\Product;
 use Orchardcity\LaravelSamcart\Values\Customer;
@@ -60,6 +61,27 @@ class Samcart extends BaseService
     public function getOrderById($id)
     {
         return $this->getObjectById(get_class(new Order()), Endpoints::getByOrderIdURI($id));
+    }
+
+    public function getChargesByOrderById($id): false|Collection
+    {
+        return $this->getListOf(get_class(new Charge()), Endpoints::getChargesByOrderIdURI($id));
+    }
+
+    public function issueOrderRefund($order_id): bool
+    {
+        // Look up charges that belong to this order
+        $list = $this->getChargesByOrderById($order_id);
+
+        /** @var Charge $charge */
+        foreach ($list as $charge){
+            // Refund each charge
+            if (!$this->issueChargeRefund($charge->id)){
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
