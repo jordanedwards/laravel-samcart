@@ -97,7 +97,7 @@ class BaseService
                 return $this->makeRequest($url, $method, $args);
             }
 
-            throw new \Exception($exception->getMessage());
+            throw new \Exception($exception->getMessage(), $exception->getCode());
         }
 
         $responseContents = $response->getBody()->getContents();

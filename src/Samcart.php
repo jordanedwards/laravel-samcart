@@ -68,6 +68,10 @@ class Samcart extends BaseService
         return $this->getListOf(get_class(new Charge()), Endpoints::getChargesByOrderIdURI($id));
     }
 
+    /**
+     * @throws GuzzleException
+     * @throws AuthException
+     */
     public function issueOrderRefund($order_id): bool
     {
         // Look up charges that belong to this order
@@ -85,13 +89,24 @@ class Samcart extends BaseService
     }
 
     /**
-     * @throws GuzzleException|AuthException
+     * @throws GuzzleException
+     * @throws \Exception
      */
     public function issueChargeRefund($id): bool
     {
-        $result = $this->makeRequest(Endpoints::issueChargeRefundURI($id),"POST");
-        if (!$result){
-            return false;
+        try {
+            $result = $this->makeRequest(Endpoints::issueChargeRefundURI($id),"POST");
+            if (!$result){
+                return false;
+            }
+
+        } catch (\Exception $exception){
+            if ($exception->getCode() == '409')
+            {
+                // This charge has already been refunded.
+                return true;
+            }
+            throw new \Exception($exception->getMessage(), $exception->getCode());
         }
 
         return true;
