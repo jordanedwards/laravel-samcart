@@ -14,6 +14,10 @@ class Customer extends ListObject
     public string $created_at;
     public string $updated_at;
 
+    /**
+     * @param array $array
+     * @return void
+     */
     public function populateFromArray(array $array)
     {
         foreach ($array as $key => $value){

@@ -21,7 +21,11 @@ class OrderItem
     public int $initial_price_shipping;
     public int $initial_price_total;
 
-    public function populateFromArray(array $array)
+    /**
+     * @param array $array
+     * @return void
+     */
+    public function populateFromArray(array $array): void
     {
         foreach ($array as $key => $value){
             if (property_exists(self::class, $key)){

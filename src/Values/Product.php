@@ -23,7 +23,11 @@ class Product extends ListObject
     public string $updated_at;
     public string $archived_at;
 
-    public function populateFromArray(array $array)
+    /**
+     * @param array $array
+     * @return void
+     */
+    public function populateFromArray(array $array): void
     {
         foreach ($array as $key => $value){
             if (property_exists(self::class, $key)){

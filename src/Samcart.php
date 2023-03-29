@@ -2,6 +2,7 @@
 
 namespace Orchardcity\LaravelSamcart;
 
+use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Collection;
 use Orchardcity\LaravelSamcart\Values\Charge;
@@ -14,25 +15,34 @@ class Samcart extends BaseService
 {
     // Retrieve Lists
     /**
-     * @throws GuzzleException|AuthException
+     * @param int $limit
+     * @return false|Collection
+     * @throws AuthException
+     * @throws GuzzleException
      */
-    public function getProducts($limit = 250): false|Collection
+    public function getProducts(int $limit = 250): false|Collection
     {
         return $this->getListOf(get_class(new Product()), Endpoints::getProductsURI(), $limit);
     }
 
     /**
-     * @throws GuzzleException|AuthException
+     * @param int $limit
+     * @return false|Collection
+     * @throws AuthException
+     * @throws GuzzleException
      */
-    public function getOrders($limit = 100): false|Collection
+    public function getOrders(int $limit = 100): false|Collection
     {
         return $this->getListOf(get_class(new Order()), Endpoints::getOrdersURI(), $limit);
     }
 
     /**
-     * @throws GuzzleException|AuthException
+     * @param int $limit
+     * @return false|Collection
+     * @throws AuthException
+     * @throws GuzzleException
      */
-    public function getCustomers($limit = 250): false|Collection
+    public function getCustomers(int $limit = 250): false|Collection
     {
         return $this->getListOf(get_class(new Customer()), Endpoints::getCustomersURI(), $limit);
     }
@@ -40,39 +50,57 @@ class Samcart extends BaseService
     // Retrieve individual records
 
     /**
-     * @throws GuzzleException|AuthException
+     * @param int $id
+     * @return mixed|null
+     * @throws AuthException
+     * @throws GuzzleException
      */
-    public function getProductById($id)
+    public function getProductById(int $id): mixed
     {
         return $this->getObjectById(get_class(new Product()), Endpoints::getByProductIdURI($id));
     }
 
     /**
-     * @throws GuzzleException|AuthException
+     * @param int $id
+     * @return mixed|null
+     * @throws AuthException
+     * @throws GuzzleException
      */
-    public function getCustomerById($id)
+    public function getCustomerById(int $id): mixed
     {
         return $this->getObjectById(get_class(new Customer()), Endpoints::getByCustomerIdURI($id));
     }
 
     /**
-     * @throws GuzzleException|AuthException
+     * @param int $id
+     * @return mixed|null
+     * @throws AuthException
+     * @throws GuzzleException
      */
-    public function getOrderById($id)
+    public function getOrderById(int $id): mixed
     {
         return $this->getObjectById(get_class(new Order()), Endpoints::getByOrderIdURI($id));
     }
 
-    public function getChargesByOrderById($id): false|Collection
+    /**
+     * @param int $id
+     * @return false|Collection
+     * @throws AuthException
+     * @throws GuzzleException
+     */
+    public function getChargesByOrderById(int $id): false|Collection
     {
         return $this->getListOf(get_class(new Charge()), Endpoints::getChargesByOrderIdURI($id));
     }
 
+
     /**
+     * @param int $order_id
+     * @return bool
      * @throws GuzzleException
      * @throws AuthException
      */
-    public function issueOrderRefund($order_id): bool
+    public function issueOrderRefund(int $order_id): bool
     {
         // Look up charges that belong to this order
         $list = $this->getChargesByOrderById($order_id);
@@ -89,10 +117,11 @@ class Samcart extends BaseService
     }
 
     /**
-     * @throws GuzzleException
-     * @throws \Exception
+     * @param int $id
+     * @return bool
+     * @throws Exception
      */
-    public function issueChargeRefund($id): bool
+    public function issueChargeRefund(int $id): bool
     {
         try {
             $result = $this->makeRequest(Endpoints::issueChargeRefundURI($id),"POST");
@@ -100,13 +129,15 @@ class Samcart extends BaseService
                 return false;
             }
 
-        } catch (\Exception $exception){
+        } catch (GuzzleException $exception){
             if ($exception->getCode() == '409')
             {
-                // This charge has already been refunded.
+                // This charge has already been refunded, it's ok to return as successful
                 return true;
             }
-            throw new \Exception($exception->getMessage(), $exception->getCode());
+            // This needs work; There could be other guzzle exceptions that we should handle
+            // within the context of a guzzle exception, rather than generalizing
+            throw new Exception($exception->getMessage(), $exception->getCode());
         }
 
         return true;

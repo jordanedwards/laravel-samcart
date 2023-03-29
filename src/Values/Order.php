@@ -19,6 +19,10 @@ class Order extends ListObject
     public ?int $card_used;
     public string $processor_name;
 
+    /**
+     * @param array $array
+     * @return void|null
+     */
     public function populateFromArray(array $array)
     {
         if (!isset($array['id'])){

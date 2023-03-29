@@ -21,6 +21,10 @@ class Charge extends ListObject
     public string $created_at;
     public int $total;
 
+    /**
+     * @param array $array
+     * @return void|null
+     */
     public function populateFromArray(array $array)
     {
         if (!isset($array['id'])){

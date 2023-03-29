@@ -2,11 +2,13 @@
 
 namespace Orchardcity\LaravelSamcart;
 
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Request;
 use Orchardcity\LaravelSamcart\Config\V1\Endpoints;
+
 class BaseService
 {
     protected bool $active = false;
@@ -58,6 +60,7 @@ class BaseService
      *
      * @return false|array
      * @throws GuzzleException|AuthException
+     * @throws Exception
      */
     public function makeRequest(
         string $url,
@@ -97,14 +100,14 @@ class BaseService
                 return $this->makeRequest($url, $method, $args);
             }
 
-            throw new \Exception($exception->getMessage(), $exception->getCode());
+            throw new Exception($exception->getMessage(), $exception->getCode());
         }
 
         $responseContents = $response->getBody()->getContents();
 
         // If not between 200 and 300
         if (!preg_match("/^[2-3][0-9]{2}/", $response->getStatusCode())) {
-            throw new \Exception('Call to samcart api returned status code: '. $response->getStatusCode());
+            throw new Exception('Call to samcart api returned status code: '. $response->getStatusCode());
         }
 
         $response_body = json_decode($responseContents, true);
@@ -146,11 +149,9 @@ class BaseService
             return $data;
         }
 
-        if (isset($response_body['data'])) {
-            $data = $response_body['data'];
-        } else {
-            $data = $response_body;
-        }
+        // Some responses have the payload in the response body, some
+        // have it inside the 'data' key
+        $data = $response_body['data'] ?? $response_body;
 
         while (isset($response_body['pagination']['next'])
             AND sizeof($data) < $limit){
@@ -164,7 +165,6 @@ class BaseService
             if($response_body) {
                 $data = array_merge($data, $response_body['data']);
             }
-
         }
 
         return $data;

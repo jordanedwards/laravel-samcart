@@ -4,10 +4,9 @@
 /storage/*.key
 /vendor
 /public/vendor
-!/storage/app/db-blade-compiler/views/
-/storage/app/db-blade-compiler/views/*
 .env
 .env.backup
+.phpunit.cache
 .phpunit.result.cache
 docker-compose.override.yml
 Homestead.json
