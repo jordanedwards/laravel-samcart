@@ -154,10 +154,10 @@ class BaseService
         $data = $response_body['data'] ?? $response_body;
 
         while (isset($response_body['pagination']['next'])
-            AND sizeof($data) < $limit){
+            AND sizeof($data) <= $limit){
 
             $response_body = $this->makeRequest(
-                $url,
+                $response_body['pagination']['next'] . "&limit=100",
                 $method,
                 $args
             );
